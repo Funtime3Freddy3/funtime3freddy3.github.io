@@ -1,0 +1,114 @@
+<style>
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                max-width: 100%;
+                margin: 0;
+                flex-direction: column;
+            }
+            .art.text.title {
+                font-family: monospace;
+                font-size: 100px;
+                color: #db56fb;
+                overflow-wrap: break-word;
+                word-break: break-word;
+                overflow: hidden;
+                max-width: 90vw;
+                border-right: 2px solid #db56fb;
+                animation: blink 1s step-end infinite;
+                display: inline-block;
+            }
+            .cursor {
+                position: absolute;
+                right: 0;
+                top: 0;
+                width: 2px;
+                background-color: #db56fb;
+                animation: blink 1s step-end infinite;
+            }
+            @media (max-width: 800px) {
+                .art.text.title {
+                    font-size: 70px;
+                }
+                .logo {
+                    width: 70px;
+                    max-height: 70px;
+                }
+            }
+            @media (max-width: 500px) {
+                .art.text.title {
+                    font-size: 30px;
+                }
+                .logo {
+                    width: 30px;
+                    max-height: 30px;
+                }
+            }
+            @keyframes blink {
+                0%, 100% { border-color: transparent; }
+                50% { border-color: #db56fb; }
+            }
+        </style>
+        <div class="art">
+            <div class="art text title" id="typewriter"></div>
+        </div>
+        <script>
+            const typewriter = document.getElementById("typewriter");
+            const sentences = [
+                `Funtime3Freddy3 <img src="https://cdn.discordapp.com/emojis/932512403470569522.gif?size=128&quality=lossless" class="logo">`,
+                "Music producer 🎙🎚🎛",
+                "Composer 🎹",
+                "Artist 🎨",
+                "Poet 📝✍️",
+                "Web developer 💻",
+                "Gamer 🎮",
+                "Content creator 📹🎥",
+                "Entrepreneur 💼🚀💡📈"
+            ];
+
+            let delay = (ms) => new Promise(res => setTimeout(res, ms));
+            async function typeSentence(sentence, speed = 60) {
+                const tempDiv = document.createElement("div");
+                tempDiv.innerHTML = sentence;
+                const children = Array.from(tempDiv.childNodes);
+                for(const child of children) {
+                    if(child.nodeType === Node.TEXT_NODE) {
+                        for(let char of child.textContent) {
+                            typewriter.innerHTML += char;
+                            await delay(speed);
+                        }
+                    } else {
+                        typewriter.appendChild(child.cloneNode(true));
+                        await delay(speed);
+                    }
+                }
+            }
+            async function eraseSentence(speed = 60) {
+                while(typewriter.childNodes.length > 0) {
+                    const last = typewriter.lastChild;
+                    if(last.nodeType === Node.TEXT_NODE) {
+                        if (last.textContent.length > 1) {
+                            last.textContent = last.textContent.slice(0, -1);
+                        } else {
+                            typewriter.removeChild(last);
+                        }
+                    } else {
+                        typewriter.removeChild(last);
+                    }
+                    await delay(speed);
+                }
+            }
+            async function loopTyping() {
+                let i = 0;
+                while (true) {
+                    await typeSentence(sentences[i]);
+                    await delay(1500);
+                    await eraseSentence();
+                    await delay(300);
+                    i = (i + 1) % sentences.length;
+                }
+            }
+            window.addEventListener("load", loopTyping);
+        </script>
